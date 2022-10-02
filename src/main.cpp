@@ -594,9 +594,13 @@ String apid = "AirSensor-" + String((uint32_t)(ESP.getEfuseMac() >> 32), HEX); /
 String apwd = "damiano22"; //SoftAP Password
 IPAddress softIP (172,217,28,1); //SoftAP IP
 
+//To avoid infinite loop in case of NTP problems
+//static is not necessary because it's used within a while loop
+unsigned long ntpWaitTimeout = 0;
+
 //Homepage
 static int homepageUpdTime = 30; //update time in seconds
-static unsigned long currentMillis =0; //store the current millis
+unsigned long currentMillis =0; //store the current millis
 static unsigned long homepageLastMillis = 0; //store the last time the homepage has been updated
 
 //Boot variables
@@ -806,10 +810,24 @@ switch(currentState) {
   
     if (useWiFi) { //yes
       configTzTime(timeZone, ntpServer1, ntpServer2, ntpServer3);
-      while (!isTimeSet) {
+
+      currentMillis = millis();
+      ntpWaitTimeout = currentMillis+60000; //timeout after 60 seconds
+
+      while ((!isTimeSet) && (currentMillis<ntpWaitTimeout)) {
         //wait for time set from NTP Server
+        currentMillis = millis();
       }
-      setState(22);
+
+      if (isTimeSet) { //NTP OK
+        setState(22);
+      } else { 
+        threeRows_centered("No response from","NTP Server.","Going back to WiFi selection.");
+        delay(3000);
+        useWiFi=WiFiOff();
+        setState(5);
+      }
+
     } else {
       setTime(year,month,day,hour,minute,0,isDst);
       setState(24);
@@ -1141,7 +1159,7 @@ switch(currentState) {
     }
   } break;
 
-  case 1200: {
+    case 1200: {
     if (useWiFi) {
       useWiFi=WiFiOff(); 
       setState(1);
@@ -1150,10 +1168,22 @@ switch(currentState) {
       WiFiOn(apid, apwd, softIP);
       //currentState =1200; //Official workaround to use interrupt with GPIO 36&&39 while WiFi is enabled (part2)
       configTzTime(timeZone, ntpServer1, ntpServer2, ntpServer3);
-      while (!isTimeSet) {
+
+      currentMillis = millis();
+      ntpWaitTimeout = currentMillis+60000; //timeout after 60 seconds
+
+      while ((!isTimeSet) && (currentMillis<ntpWaitTimeout)) {
         //wait for time set from NTP Server
+        currentMillis = millis();
+      }
+
+      if (!isTimeSet) {
+        threeRows_centered("No response from","NTP Server.","Going back to Homepage.");
+        delay(3000);
+        useWiFi=WiFiOff();
       }
       setState(1);
+
     }
   } break;
 
