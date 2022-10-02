@@ -23,7 +23,7 @@
 /* ----------------------------------------------- */
 
 //This format is required by Autoconnect function
-#define FIRMWARE_VERSION  "1.0.0"
+#define FIRMWARE_VERSION  "1.0.1"
 const char* fw_ver = FIRMWARE_VERSION;
 
 /* Default Pins
@@ -338,7 +338,7 @@ if (WiFi.getMode() && WIFI_AP) {
     }
 }
 
-void setAutoconnectConfig(String apid, String apwd) {
+void setAutoconnectConfig(String apid, String apwd, IPAddress softIP) {
   //AutoConnect Configuration
   Config.autoReset = false;     // Not reset the module even by intentional disconnection using AutoConnect menu.
   Config.autoReconnect = true;    // Attempt automatic reconnection to one of the saved AP
@@ -362,6 +362,7 @@ void setAutoconnectConfig(String apid, String apwd) {
   //SoftAP authentication
   Config.apid = apid;
   Config.psk  = apwd;
+  Config.gateway = softIP;
   //HTML authentication settings to access the captive portal
   Config.auth = AC_AUTH_DIGEST;
   Config.authScope = AC_AUTHSCOPE_PORTAL;
@@ -370,7 +371,9 @@ void setAutoconnectConfig(String apid, String apwd) {
 
   Portal.config(Config); //Set Autoconnect Config
 }
-bool startAutoconnect(String apid, String apwd) {
+bool startAutoconnect(String apid, String apwd, IPAddress softIP) {
+
+  String IPString = String() + softIP[0] + "." + softIP[1] + "." + softIP[2] + "." + softIP[3] + "/_ac";
 
   //Set the program behaviour after WiFi Connection of the ESP32 to the AP (Turn off SoftAP)
   Portal.onConnect(SoftAP_Off);
@@ -397,7 +400,9 @@ bool startAutoconnect(String apid, String apwd) {
     //WiFi.setSleep(false);
     return 1;
   } else {
-    threeRows_centered("Failed to connect. CP started","AP Name: "+apid,"Password: "+apwd);
+    twoRows_centered("Failed to connect","Starting AP and CP");
+    delay(3000);
+    threeRows_centered("AP Name: "+apid,"Password: "+apwd, "IP: "+IPString);
     //Official workaround to use interrupt with GPIO 36&&39 while WiFi is enabled (part1)
     //WiFi.setSleep(false);
     delay(3000);
@@ -416,9 +421,9 @@ bool WiFiOff() {
   delay(3000);
   return 0;
 }
-void WiFiOn(String apid, String apwd) {
-  setAutoconnectConfig(apid, apwd);
-  if(!startAutoconnect(apid, apwd))
+void WiFiOn(String apid, String apwd, IPAddress softIP) {
+  setAutoconnectConfig(apid, apwd, softIP);
+  if(!startAutoconnect(apid, apwd, softIP))
     while (WiFi.status() != WL_CONNECTED) {
       //This replace Server.handleClient. Process the AutoConnect menu interface and captive portal
       Portal.handleClient();
@@ -586,7 +591,8 @@ float percentage = 0;
 
 //WiFi
 String apid = "AirSensor-" + String((uint32_t)(ESP.getEfuseMac() >> 32), HEX); //SoftAP with unique SSID 
-String apwd= "damiano22"; //SoftAP Password
+String apwd = "damiano22"; //SoftAP Password
+IPAddress softIP (172,217,28,1); //SoftAP IP
 
 //Homepage
 static int homepageUpdTime = 30; //update time in seconds
@@ -624,11 +630,6 @@ if (millis()<homepageLastMillis) homepageLastMillis = millis(); //because homepa
 //This replace Server.handleClient. Process the AutoConnect menu interface and captive portal
 if(useWiFi)
   Portal.handleClient(); 
-
-//Serial.println(bootState);
-//Serial.println(currentState);
-//Serial.println(batteryAnalog());
-//delay(2000);
 
 if(bootState) 
 switch(currentState) {
@@ -681,8 +682,8 @@ switch(currentState) {
     useWiFi= currentInput;
 
       if (useWiFi) { //yes
-        WiFiOn(apid, apwd);
-        //currentState =4; //Official workaround to use interrupt with GPIO 36&&39 while WiFi is enabled (part2)
+        WiFiOn(apid, apwd, softIP);
+        //currentState =6; //Official workaround to use interrupt with GPIO 36&&39 while WiFi is enabled (part2)
         setState(21);
       } else setState(7);
   } break;
@@ -1145,9 +1146,9 @@ switch(currentState) {
       useWiFi=WiFiOff(); 
       setState(1);
     } else {
-      WiFiOn(apid, apwd);
-      //currentState =120; //Official workaround to use interrupt with GPIO 36&&39 while WiFi is enabled (part2)
       useWiFi=true;
+      WiFiOn(apid, apwd, softIP);
+      //currentState =1200; //Official workaround to use interrupt with GPIO 36&&39 while WiFi is enabled (part2)
       configTzTime(timeZone, ntpServer1, ntpServer2, ntpServer3);
       while (!isTimeSet) {
         //wait for time set from NTP Server
