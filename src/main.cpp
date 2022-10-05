@@ -161,20 +161,20 @@ void batteryPercentage(int *percentage, int *lastPercentage, int *resetForChargi
     //Workaround for unstable analogRead
     //to avoid fake values when *percentage <*lastPercentage but too low
     // *lastPercentage != 100 because the battery may be low on boot 
-    if(*lastPercentage !=100 && ((*lastPercentage-*percentage)>30) && ((*lastPercentage-*percentage)<60))
+    if(*lastPercentage !=100 && ((*lastPercentage-*percentage)>30) && ((*lastPercentage-*percentage)<60)) {
       *percentage=*lastPercentage;
     //to avoid fake values with *percentage>*lastPercentage with a simple reset for charging state
-    else if(*percentage>*lastPercentage) {
+    } else if(*percentage>*lastPercentage) {
       if (*resetForCharging <3) { 
         *percentage=*lastPercentage;
-        *resetForCharging++;
+        (*resetForCharging)++;
       } else { // the battery is probably charging
         *lastPercentage=*percentage;
         *resetForCharging=0;
       }
-    } else 
+    } else {
       *lastPercentage=*percentage;
-
+    }
   //}
 }
 
