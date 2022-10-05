@@ -45,7 +45,7 @@ int saveLog (uint16_t co2, float temp, float hum, float pressure, float altitude
     Serial.println("File doesn't exist");
     Serial.println("Creating file...");
     log.close();
-    File log = fs.open(filename, FILE_WRITE);
+    log = fs.open(filename, FILE_WRITE);
     if(log) {
       log.println("Day,Month,Year,Hour,Minute,Second,CO2 [ppm],Temp [C],Humidity [%],Pressure [mbar],Altitude [m]");
       log.print(&time,"%d");
@@ -81,7 +81,7 @@ int saveLog (uint16_t co2, float temp, float hum, float pressure, float altitude
   else {
     Serial.println("File already exists");  
     log.close();
-    File log = fs.open(filename, FILE_APPEND); //FILE_APPEND append the text
+    log = fs.open(filename, FILE_APPEND); //FILE_APPEND append the text
     if(log) {
       log.print(&time,"%d");
       log.print(",");
