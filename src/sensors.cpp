@@ -72,10 +72,9 @@ void updateMinMaxValues(uint16_t co2, float temp, float hum, minmax *minmaxvalue
 }
 bool getDataFromSensors(uint16_t *co2, float *temp, float *hum, float *pressure, float *altitude, volatile int *partialUpdate) {
     static int hangCheckSCD30 = 0; //used to reset the SCD30 sensor after 4 times the data are not available
-    static int first_reads =0; //Fix for initial bad values from the BMP390
-    uint16_t tempco2 =0;
 
     if (airSensor.dataAvailable() && bmpSensor.performReading()) {
+        static int first_reads =0; //Fix for initial bad values from the BMP390
 
         hangCheckSCD30 =0; //reset 
 
@@ -88,7 +87,7 @@ bool getDataFromSensors(uint16_t *co2, float *temp, float *hum, float *pressure,
           airSensor.setAltitudeCompensation(*altitude); //m
         }
 
-        tempco2 =airSensor.getCO2();
+        uint16_t tempco2 =airSensor.getCO2();
 
         if (tempco2 <380) {
           threeRows_centered("Bad CO2 (<380 ppm). Please","recalibrate the SCD30","or wait 20s");
