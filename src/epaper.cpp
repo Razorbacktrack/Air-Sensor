@@ -331,7 +331,6 @@ void title_centered_1row_intinput(const char *first, int value, boolean yes_no, 
   display.setTextColor(GxEPD_BLACK);
   
   int16_t tbx, tby; uint16_t tbw, tbh;
-  int16_t vsx, vsy; uint16_t vsw, vsh; //data
 
   display.getTextBounds(first, 0, 0, &tbx, &tby, &tbw, &tbh);
   uint16_t firstx = ((display.width() - tbw) / 2) - tbx; //center of the screen (x-axis)
