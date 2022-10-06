@@ -110,7 +110,6 @@ float altitude =0; //m
 //Battery
 int batteryAnalog() { //trying to stabilize analogRead
   int reads[SEQUENTIAL_READS]={0};
-  int analogValue=0;
   int maxIndex=0;
   int minIndex=0;
   int max=0;
@@ -119,7 +118,7 @@ int batteryAnalog() { //trying to stabilize analogRead
   int averageValue = 0;
 
   for(int i=0;i<SEQUENTIAL_READS;i++) { //save 5 reads on the array and find max/min value/index
-    analogValue=analogRead(BATT_MONITOR);
+    int analogValue = analogRead(BATT_MONITOR);
     reads[i]=analogValue;
 
     if (analogValue < min) {
