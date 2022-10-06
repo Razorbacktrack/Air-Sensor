@@ -575,7 +575,6 @@ void setup() {
 void loop() {
 
 //SCD30
-int samplingInterval = 2; //default, seconds
 uint16_t settingVal = 0;
 
 //BMP390
@@ -664,7 +663,8 @@ switch(currentState) {
 
   case 4: {
     homepageUpdTime= currentInput;
-
+    int samplingInterval = 2; //default, seconds
+    
     //The SCD30 initialization is here to preserve power usage and beam life in case of random reboots
     initializeSensors(ASC, samplingInterval);
 
