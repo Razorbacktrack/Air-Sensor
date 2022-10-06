@@ -182,7 +182,7 @@ void batteryPercentage(int *percentage, int *lastPercentage, int *resetForChargi
 void setState(unsigned s) {
    //reset for full screen update only if the currentState is not the Homepage and the 
    //destination state is not defined
-  if (currentState !=1 || (currentState == 1 && s == 10)) partialUpdate = 0;
+  if ((currentState !=1) || (s == 10)) partialUpdate = 0;
 
   previousState= currentState;
   currentState = s; //state that we want
