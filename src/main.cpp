@@ -603,12 +603,6 @@ static boolean useSD = false;
 static boolean useWiFi = false;
 static boolean usePixel = false;
 static boolean ASC = false; //automatic self-calibration
-static int year = 0;
-static int month = 0;
-static int day = 0;
-static int hour = 0;
-static int minute = 0;
-static int isDst = 0;
 
 //Debouncing 
 if (micros()<debouncingLastMicros) debouncingLastMicros = micros(); //because debouncingLastMicros is bigger after micros overflow
@@ -632,6 +626,13 @@ if(useWiFi)
 
 if(bootState) 
 switch(currentState) {
+
+static int year = 0;
+static int month = 0;
+static int day = 0;
+static int hour = 0;
+static int minute = 0;
+static int isDst = 0;
 
   case 1: {
     if(firstTime){
