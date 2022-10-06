@@ -23,7 +23,7 @@
 /* ----------------------------------------------- */
 
 //This format is required by Autoconnect function
-#define FIRMWARE_VERSION  "1.0.1"
+#define FIRMWARE_VERSION  "1.0.2"
 const char* fw_ver = FIRMWARE_VERSION;
 
 /* Default Pins
