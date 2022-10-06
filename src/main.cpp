@@ -584,9 +584,6 @@ uint16_t settingVal = 0;
 //Initialize the maximum value to a small number
 static minmax minmaxvalues= {10000, 0, 10000, 0, 10000, 0};
 
-//Battery
-float percentage = 0;
-
 //WiFi
 String apid = "AirSensor-" + String((uint32_t)(ESP.getEfuseMac() >> 32), HEX); //SoftAP with unique SSID 
 String apwd = "damiano22"; //SoftAP Password
