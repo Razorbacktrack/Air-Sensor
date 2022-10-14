@@ -59,10 +59,10 @@ volatile int partialUpdate = 0; //Variable used to control the partial update (i
 #define SEQUENTIAL_READS 64 //multisampling
 #define READS_DISTANCE 0 //ms
 //This values has been found with some tests
-#define MAX_BATTERY_VALUE 2280 //2288 or slightly above, 4.147v
+#define MAX_BATTERY_VALUE 2380 //2390 or slightly above
 #define MIN_BATTERY_VALUE 1715 // or slightly below, 3.057v
 //It's not possible to use that value because it changes 2000 when the battery level is too low
-//#define MIN_CHARGING_VALUE 2358
+//#define MIN_CHARGING_VALUE 2350
 
 //Reset debug
 typedef struct  {
@@ -146,10 +146,6 @@ int batteryAnalog() { //trying to stabilize analogRead
 void batteryPercentage(int *percentage, int *lastPercentage, int *resetForCharging) {
   int fixedValue = batteryAnalog();
 
-  //if (fixedValue>MIN_CHARGING_VALUE) { //this check is disabled because MIN_CHARGING_VALUE is reliable only when the battery is at least half charged
-  //  percentageString = "Batt. Charging";
-  //  *lastPercentage = 100; //reset
-  //} else {
     *percentage = map(fixedValue,MIN_BATTERY_VALUE,MAX_BATTERY_VALUE,0,100);
     if (*percentage < 0) {
       *percentage = 0;  
@@ -174,7 +170,6 @@ void batteryPercentage(int *percentage, int *lastPercentage, int *resetForChargi
     } else {
       *lastPercentage=*percentage;
     }
-  //}
 }
 
 //Menu
