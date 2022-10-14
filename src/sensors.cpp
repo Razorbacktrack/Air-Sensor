@@ -25,6 +25,8 @@ void initializeSensors(boolean ASC, int samplingInterval) {
   //Power consumption minimized and response time maximized at high sampling intervals
   airSensor.setMeasurementInterval(samplingInterval);
 
+  airSensor.useStaleData(true); //output the previous (stale) reading instead of zero
+
   //if (! bmp.begin_SPI(BMP_CS, BMP_SCK, BMP_MISO, BMP_MOSI)) {  // software SPI mode
   if (!bmpSensor.begin_SPI(BMP_CS)) {  //hardware SPI mode, Initialize the BMP library
     twoRows_centered("BMP390 sensor not detected", "Please check wiring. Freezing");
